@@ -30,48 +30,31 @@ remove_action( 'genesis_entry_footer', 'genesis_post_meta' );
 remove_action( 'genesis_entry_content', 'genesis_do_post_content_nav', 12 );
 
 
+//* Replace the standard loop
+remove_action( 'genesis_loop', 'genesis_do_loop' );
 
+//* Add our custom loop
+add_action( 'genesis_loop', 'el_category_loop' );
 
-//* Code for custom loop 
+function el_category_loop() {
 
-function
+	$cat_args = array(
+	  'orderby' => 'name',
+	  'order'   => 'ASC'
+	);
 
-category_loop() {
+	$categories = get_categories( $cat_args );
 
-    //
-$cat_args=array(
-  'orderby' => 'name',
-  'order' => 'ASC'
-   );
-$categories=get_categories($cat_args);
-foreach( $categories as $category) { 
-	echo '<article class="entry">';
-	echo '<a href="'.get_category_link($category->term_id).'" title="'.$category->name.'"><img src="http://yourdomain.com/wp-content/uploads/' . $category->cat_ID . '.jpg" class="alignleft entry-image post-image"></img></a>';
-	echo '<header class="entry-header">';
-		echo '<p class=entry-meta></p>';
-    	echo '<h2 class="entry-title"><a href="' . get_category_link( $category->term_id ) . '">'.$category->name.'</a></h2>';
-    echo '</header>';
-    echo '<div class="entry-content"></div>';
-    echo '</article>';
-} 
-	
+	foreach( $categories as $category) {
+		echo '<article class="entry">';
+		echo '<a href="' . get_category_link( $category->term_id ) . '" title="' . $category->name . '"><img src="http://yourdomain.com/wp-content/uploads/' . $category->cat_ID . '.jpg" class="alignleft entry-image post-image" /></a>';
+		echo '<header class="entry-header">';
+	    	echo '<h2 class="entry-title"><a href="' . get_category_link( $category->term_id ) . '">'.$category->name.'</a></h2>';
+	    echo '</header>';
+	    echo '</article>';
+	}
+
 }
-
-
-//* Replace the standard loop with our custom loop - 
-//* Props to Jonathan Perez of SureFire Web Services for this bit!
-
-remove_action(
-'genesis_loop',
-'genesis_do_loop'
-
-);
-
-add_action(
-'genesis_loop',
-'category_loop'
-
-);
 
 //* Run the Genesis loop
 genesis();
